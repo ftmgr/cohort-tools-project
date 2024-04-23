@@ -123,10 +123,37 @@ app.put("/api/students/:studentId", (req, res) => {
     });
 });
 
+//DELETE /api/students/:studentId - Deletes a specific student by id
+
+app.delete("/api/students/:studentId", (req, res) => {
+  Student.findByIdAndDelete(req.params.studentId)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((error) => {
+      console.error("Error while deleting student ->", error);
+      res.status(500).json({ message: "Error while deleting a single student" });
+    });
+});
+
+
 //COHORT SECTION
 
-app.post("/api/students", (req, res) => {
-  Cohort.create({})
+//POST /api/cohorts - Creates a new cohort
+app.post("/api/cohorts", (req, res) => {
+  Cohort.create({
+    cohortSlug:req.body.cohortSlug,
+    cohortName:req.body.cohortName,
+    program:req.body.program,
+    format:req.body.format,
+    campus:req.body.campus,
+    startDate:req.body.startDate,
+    endDate:req.body.endDate,
+    inProgress:req.body.inProgress,
+    programManager:req.body.programManager,
+    leadTeacher:req.body.leadTeacher,
+    totalHours:req.body.totalHours,
+  })
     .then((createdCohort) => {
       res.status(201).json(createdCohort);
       console.log(createdCohort);
@@ -142,7 +169,7 @@ app.post("/api/students", (req, res) => {
 app.get("/api/cohorts", (req, res) => {
   Cohort.find({})
     .then((cohorts) => {
-      console.log("Retrieved students ->", cohorts);
+      console.log("Retrieved cohorts ->", cohorts);
       res.status(200).json(cohorts);
     })
     .catch((error) => {
@@ -151,8 +178,42 @@ app.get("/api/cohorts", (req, res) => {
     });
 });
 
+//GET /api/cohorts/:cohortId - Retrieves a specific cohort by id
+app.get("/api/cohorts/:cohortId", (req, res) => {
+  Cohort.findById(req.params.cohortId)
+    .then((cohort) => {
+      if (!cohort) {
+        console.log("cohort not found");
+        return res.status(404).json({ error: "cohort not found" });
+      }
+      console.log("Retrieved cohort ->", cohort);
+      res.status(200).json(cohort);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving cohort ->", error);
+      res.status(500).json({ error: "Failed to retrieve cohort" });
+    });
+});
+
+//PUT /api/cohorts/:cohortId - Updates a specific cohort by id
+
+app.put("/api/cohorts/:cohortId", (req, res) => {
+  Cohort.findByIdAndUpdate(req.params.cohortId, req.body, { new: true })
+    .then((updatedCohort) => {
+      res.status(200).json(updatedCohort);
+    })
+    .catch((error) => {
+      console.error("Error while updating cohort ->", error);
+      res
+        .status(500)
+        .json({ message: "Error while updating a single cohort" });
+    });
+});
+
+//DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
+
 app.delete("/api/cohorts/:cohortId", (req, res) => {
-  Cohort.findByIdAndDelete(req.params.id)
+  Cohort.findByIdAndDelete(req.params.cohortId)
     .then(() => {
       res.status(204).send();
     })
