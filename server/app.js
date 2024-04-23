@@ -127,11 +127,12 @@ app.put("/api/students/:studentId", (req, res) => {
 });
 
 app.delete("/api/students/:studentId", (req, res) => {
-  Student.findByIdAndDelete(req.params.id)
+  Student.findByIdAndDelete(req.params.studentId)
     .then(() => {
       res.status(204).send();
     })
     .catch((error) => {
+      console.error("Error while deleting student ->", error);
       res.status(500).json({ message: "Error while deleting a single student" });
     });
 });
