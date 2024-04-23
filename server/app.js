@@ -37,6 +37,8 @@ app.use(
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
+
+//POST /api/students - Creates a new student
 app.post("/api/students", (req, res) => {
   Student.create({
     firstName: req.body.firstName,
@@ -50,18 +52,6 @@ app.post("/api/students", (req, res) => {
     image: req.body.image,
     cohort: req.body.cohort,
     projects: req.body.projects,
-    // firstName: "SaeaaawerfdwsdTRZHerfwqwdeeaideh",
-    // lastName: "BahadaaoerrsaqwDSgfdan",
-    // email: "Saeiaadeh.bSAYasyhfdbgadoran@gmail.com",
-    // phone: "09876543221",
-    // linkedinUrl: "sedhgtfgrft7zizl",
-    // languages: ["English"],
-    // program: "Web Dev",
-    // background: "fdcjhhblkj",
-    // image:
-    //   "https://img.freepik.com/free-photo/good-advice-from-beautiful-woman_329181-3527.jpg",
-    // cohort: "1234a6678ee5360f6dc851a4",
-    // // projects: [],
   })
     .then((createdStudent) => {
       res.status(201).json(createdStudent);
@@ -73,8 +63,10 @@ app.post("/api/students", (req, res) => {
     });
 });
 
+//GET /api/students - Retrieves all of the students in the database collection
 app.get("/api/students", (req, res) => {
-  Student.find({}).populate("cohort")
+  Student.find({})
+    .populate("cohort")
     .then((students) => {
       console.log("Retrieved students ->", students);
       res.status(200).json(students);
@@ -85,8 +77,10 @@ app.get("/api/students", (req, res) => {
     });
 });
 
+//GET /api/students/cohort/:cohortId - Retrieves all of the students for a given cohort
 app.get("/api/students/cohort/:cohortId", (req, res) => {
-  Student.find({ cohort: req.params.cohortId }).populate("cohort")
+  Student.find({ cohort: req.params.cohortId })
+    .populate("cohort")
     .then((students) => {
       console.log("Retrieved students ->", students);
       res.status(200).json(students);
@@ -97,8 +91,10 @@ app.get("/api/students/cohort/:cohortId", (req, res) => {
     });
 });
 
+//GET /api/students/:studentId - Retrieves a specific student by id
 app.get("/api/students/:studentId", (req, res) => {
-  Student.findById(req.params.studentId).populate("cohort")
+  Student.findById(req.params.studentId)
+    .populate("cohort")
     .then((student) => {
       if (!student) {
         console.log("Student not found");
@@ -113,6 +109,7 @@ app.get("/api/students/:studentId", (req, res) => {
     });
 });
 
+//PUT /api/students/:studentId - Updates a specific student by id
 app.put("/api/students/:studentId", (req, res) => {
   Student.findByIdAndUpdate(req.params.studentId, req.body, { new: true })
     .then((updatedStudent) => {
@@ -126,14 +123,42 @@ app.put("/api/students/:studentId", (req, res) => {
     });
 });
 
-app.delete("/api/students/:studentId", (req, res) => {
-  Student.findByIdAndDelete(req.params.id)
+//COHORT SECTION
+
+app.post("/api/students", (req, res) => {
+  Cohort.create({})
+    .then((createdCohort) => {
+      res.status(201).json(createdCohort);
+      console.log(createdCohort);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Error while creating a new cohort" });
+    });
+});
+
+// Retrieves all of the cohorts in the database collection
+
+app.get("/api/cohorts", (req, res) => {
+  Cohort.find({})
+    .then((cohorts) => {
+      console.log("Retrieved students ->", cohorts);
+      res.status(200).json(cohorts);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving cohorts ->", error);
+      res.status(500).json({ error: "Failed to retrieve cohorts" });
+    });
+});
+
+app.delete("/api/cohorts/:cohortId", (req, res) => {
+  Cohort.findByIdAndDelete(req.params.id)
     .then(() => {
       res.status(204).send();
     })
     .catch((error) => {
-      console.error("Error while deletinh student ->", error);
-      res.status(500).json({ message: "Error while deleting a single student" });
+      console.error("Error while deleting cohort ->", error);
+      res.status(500).json({ message: "Error while deleting a single cohort" });
     });
 });
 
