@@ -75,6 +75,7 @@ app.post("/api/students", (req, res) => {
 
 app.get("/api/students", (req, res) => {
   Student.find({})
+    .populate("cohort")
     .then((students) => {
       console.log("Retrieved students ->", students);
       res.status(200).json(students);
@@ -87,6 +88,7 @@ app.get("/api/students", (req, res) => {
 
 app.get("/api/students/cohort/:cohortId", (req, res) => {
   Student.find({ cohort: req.params.cohortId })
+    .populate("cohort")
     .then((students) => {
       console.log("Retrieved students ->", students);
       res.status(200).json(students);
@@ -99,6 +101,7 @@ app.get("/api/students/cohort/:cohortId", (req, res) => {
 
 app.get("/api/students/:studentId", (req, res) => {
   Student.findById(req.params.studentId)
+    .populate("cohort")
     .then((student) => {
       if (!student) {
         console.log("Student not found");
@@ -133,7 +136,9 @@ app.delete("/api/students/:studentId", (req, res) => {
     })
     .catch((error) => {
       console.error("Error while deleting student ->", error);
-      res.status(500).json({ message: "Error while deleting a single student" });
+      res
+        .status(500)
+        .json({ message: "Error while deleting a single student" });
     });
 });
 
