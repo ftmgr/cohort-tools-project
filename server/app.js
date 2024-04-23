@@ -4,6 +4,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const PORT = 5005;
+const Cohort = require("./models/Cohort.model");
+const Student = require("./models/Student.model");
 // New Branch!
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
@@ -34,6 +36,77 @@ app.use(
 // ...
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
+});
+app.post("/api/students", (req, res) => {
+  Student.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    phone: req.body.phone,
+    linkedinUrl: req.body.linkedinUrl,
+    languages: req.body.languages,
+    program: req.body.program,
+    background: req.body.background,
+    image: req.body.image,
+    cohort: req.body.cohort,
+    projects: req.body.projects,
+    // firstName: "SaeaaawerfdwsdTRZHerfwqwdeeaideh",
+    // lastName: "BahadaaoerrsaqwDSgfdan",
+    // email: "Saeiaadeh.bSAYasyhfdbgadoran@gmail.com",
+    // phone: "09876543221",
+    // linkedinUrl: "sedhgtfgrft7zizl",
+    // languages: ["English"],
+    // program: "Web Dev",
+    // background: "fdcjhhblkj",
+    // image:
+    //   "https://img.freepik.com/free-photo/good-advice-from-beautiful-woman_329181-3527.jpg",
+    // cohort: "1234a6678ee5360f6dc851a4",
+    // // projects: [],
+  })
+    .then((createdStudent) => {
+      res.status(201).json(createdStudent);
+      console.log(createdStudent);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Error while creating a new student" });
+    });
+});
+
+app.get("/api/students", (req, res) => {
+  Student.find({})
+    .then((students) => {
+      console.log("Retrieved students ->", students);
+      res.status(200).json(students);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving students ->", error);
+      res.status(500).json({ error: "Failed to retrieve students" });
+    });
+});
+
+app.get("/api/students/cohort/:cohortId", (req, res) => {
+  Student.find({ cohort: req.params.id })
+    .then((students) => {
+      console.log("Retrieved students ->", students);
+      res.status(200).json(students);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving students ->", error);
+      res.status(500).json({ error: "Failed to retrieve students" });
+    });
+});
+
+app.get("/api/students/:studentId", (req, res) => {
+  Student.findById(req.params.id)
+    .then((students) => {
+      console.log("Retrieved students ->", students);
+      res.status(200).json(students);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving students ->", error);
+      res.status(500).json({ error: "Failed to retrieve students" });
+    });
 });
 
 // START SERVER
