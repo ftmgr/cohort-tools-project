@@ -74,7 +74,7 @@ app.post("/api/students", (req, res) => {
 });
 
 app.get("/api/students", (req, res) => {
-  Student.find({})
+  Student.find({}).populate("cohort")
     .then((students) => {
       console.log("Retrieved students ->", students);
       res.status(200).json(students);
@@ -86,7 +86,7 @@ app.get("/api/students", (req, res) => {
 });
 
 app.get("/api/students/cohort/:cohortId", (req, res) => {
-  Student.find({ cohort: req.params.cohortId })
+  Student.find({ cohort: req.params.cohortId }).populate("cohort")
     .then((students) => {
       console.log("Retrieved students ->", students);
       res.status(200).json(students);
@@ -98,7 +98,7 @@ app.get("/api/students/cohort/:cohortId", (req, res) => {
 });
 
 app.get("/api/students/:studentId", (req, res) => {
-  Student.findById(req.params.studentId)
+  Student.findById(req.params.studentId).populate("cohort")
     .then((student) => {
       if (!student) {
         console.log("Student not found");
