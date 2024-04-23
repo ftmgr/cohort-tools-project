@@ -86,7 +86,7 @@ app.get("/api/students", (req, res) => {
 });
 
 app.get("/api/students/cohort/:cohortId", (req, res) => {
-  Student.find({ cohort: req.params.id })
+  Student.find({ cohort: req.params.cohortId })
     .then((students) => {
       console.log("Retrieved students ->", students);
       res.status(200).json(students);
@@ -98,14 +98,41 @@ app.get("/api/students/cohort/:cohortId", (req, res) => {
 });
 
 app.get("/api/students/:studentId", (req, res) => {
-  Student.findById(req.params.id)
-    .then((students) => {
-      console.log("Retrieved students ->", students);
-      res.status(200).json(students);
+  Student.findById(req.params.studentId)
+    .then((student) => {
+      if (!student) {
+        console.log("Student not found");
+        return res.status(404).json({ error: "Student not found" });
+      }
+      console.log("Retrieved student ->", student);
+      res.status(200).json(student);
     })
     .catch((error) => {
-      console.error("Error while retrieving students ->", error);
-      res.status(500).json({ error: "Failed to retrieve students" });
+      console.error("Error while retrieving student ->", error);
+      res.status(500).json({ error: "Failed to retrieve student" });
+    });
+});
+
+app.put("/api/students/:studentId", (req, res) => {
+  Student.findByIdAndUpdate(req.params.studentId, req.body, { new: true })
+    .then((updatedStudent) => {
+      res.status(200).json(updatedStudent);
+    })
+    .catch((error) => {
+      console.error("Error while updating student ->", error);
+      res
+        .status(500)
+        .json({ message: "Error while updating a single student" });
+    });
+});
+
+app.delete("/api/students/:studentId", (req, res) => {
+  Student.findByIdAndDelete(req.params.id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "Error while deleting a single student" });
     });
 });
 
