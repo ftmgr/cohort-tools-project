@@ -111,7 +111,10 @@ app.get("/api/students/:studentId", (req, res) => {
 
 //PUT /api/students/:studentId - Updates a specific student by id
 app.put("/api/students/:studentId", (req, res) => {
-  Student.findByIdAndUpdate(req.params.studentId, req.body, { new: true })
+  Student.findByIdAndUpdate(req.params.studentId, req.body, {
+    new: true,
+    runValidators: true,
+  })
     .then((updatedStudent) => {
       res.status(200).json(updatedStudent);
     })
@@ -132,27 +135,28 @@ app.delete("/api/students/:studentId", (req, res) => {
     })
     .catch((error) => {
       console.error("Error while deleting student ->", error);
-      res.status(500).json({ message: "Error while deleting a single student" });
+      res
+        .status(500)
+        .json({ message: "Error while deleting a single student" });
     });
 });
-
 
 //COHORT SECTION
 
 //POST /api/cohorts - Creates a new cohort
 app.post("/api/cohorts", (req, res) => {
   Cohort.create({
-    cohortSlug:req.body.cohortSlug,
-    cohortName:req.body.cohortName,
-    program:req.body.program,
-    format:req.body.format,
-    campus:req.body.campus,
-    startDate:req.body.startDate,
-    endDate:req.body.endDate,
-    inProgress:req.body.inProgress,
-    programManager:req.body.programManager,
-    leadTeacher:req.body.leadTeacher,
-    totalHours:req.body.totalHours,
+    cohortSlug: req.body.cohortSlug,
+    cohortName: req.body.cohortName,
+    program: req.body.program,
+    format: req.body.format,
+    campus: req.body.campus,
+    startDate: req.body.startDate,
+    endDate: req.body.endDate,
+    inProgress: req.body.inProgress,
+    programManager: req.body.programManager,
+    leadTeacher: req.body.leadTeacher,
+    totalHours: req.body.totalHours,
   })
     .then((createdCohort) => {
       res.status(201).json(createdCohort);
@@ -198,15 +202,16 @@ app.get("/api/cohorts/:cohortId", (req, res) => {
 //PUT /api/cohorts/:cohortId - Updates a specific cohort by id
 
 app.put("/api/cohorts/:cohortId", (req, res) => {
-  Cohort.findByIdAndUpdate(req.params.cohortId, req.body, { new: true })
+  Cohort.findByIdAndUpdate(req.params.cohortId, req.body, {
+    new: true,
+    runValidators: true,
+  })
     .then((updatedCohort) => {
       res.status(200).json(updatedCohort);
     })
     .catch((error) => {
       console.error("Error while updating cohort ->", error);
-      res
-        .status(500)
-        .json({ message: "Error while updating a single cohort" });
+      res.status(500).json({ message: "Error while updating a single cohort" });
     });
 });
 
