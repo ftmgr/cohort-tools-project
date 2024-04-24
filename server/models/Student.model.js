@@ -54,12 +54,9 @@ const studentSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Cohort",
   },
-  projects: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
-    },
-  ],
+  projects: {
+    type: [String],
+  },
 });
 
 // CREATE MODEL
