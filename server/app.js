@@ -6,6 +6,11 @@ const mongoose = require("mongoose");
 const PORT = 5005;
 const Cohort = require("./models/Cohort.model");
 const Student = require("./models/Student.model");
+const User = require("./models/User.model");
+const { isAuthenticated } = require("./middleware/jwt.middleware"); // <== IMPORT
+
+const authRouter = require("./routes/auth.routes"); //  <== IMPORT
+
 const {
   errorHandler,
   notFoundHandler,
@@ -21,6 +26,7 @@ mongoose
   .catch((err) => console.error("Error connecting to MongoDB", err));
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
+app.use("/auth", authRouter); //  <== ADD
 
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
@@ -176,7 +182,7 @@ app.post("/api/cohorts", (req, res, next) => {
     });
 });
 
-// Retrieves all of the cohorts in the database collection
+//Retrieves all of the cohorts in the database collection
 
 app.get("/api/cohorts", (req, res, next) => {
   Cohort.find({})
