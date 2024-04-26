@@ -6,6 +6,9 @@ const mongoose = require("mongoose");
 const PORT = 5005;
 const Cohort = require("./models/Cohort.model");
 const Student = require("./models/Student.model");
+const User = require("./models/User.model");
+const { isAuthenticated } = require("./middleware/jwt.middleware"); // <== IMPORT
+
 const {
   errorHandler,
   notFoundHandler,
@@ -20,7 +23,10 @@ mongoose
   .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch((err) => console.error("Error connecting to MongoDB", err));
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
+
 const app = express();
+
+const authRouter = require("./routes/auth.routes"); //  <== IMPORT
 
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
@@ -42,6 +48,8 @@ app.use(
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
+
+app.use("/auth", authRouter); //  <== ADD
 
 //POST /api/students - Creates a new student
 app.post("/api/students", (req, res, next) => {
@@ -70,7 +78,7 @@ app.post("/api/students", (req, res, next) => {
 });
 
 //GET /api/students - Retrieves all of the students in the database collection
-app.get("/api/students", (req, res, next) => {
+app.get("/api/students", isAuthenticated, (req, res, next) => {
   Student.find({})
     .populate("cohort")
     .then((students) => {
@@ -100,7 +108,7 @@ app.get("/api/students/cohort/:cohortId", (req, res, next) => {
 });
 
 //GET /api/students/:studentId - Retrieves a specific student by id
-app.get("/api/students/:studentId", (req, res, next) => {
+app.get("/api/students/:studentId", isAuthenticated, (req, res, next) => {
   Student.findById(req.params.studentId)
     .populate("cohort")
     .then((student) => {
@@ -176,7 +184,7 @@ app.post("/api/cohorts", (req, res, next) => {
     });
 });
 
-// Retrieves all of the cohorts in the database collection
+//Retrieves all of the cohorts in the database collection
 
 app.get("/api/cohorts", (req, res, next) => {
   Cohort.find({})
