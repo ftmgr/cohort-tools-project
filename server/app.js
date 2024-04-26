@@ -38,7 +38,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [`http://localhost:${PORT}`],
+    origin: [`http://localhost:5173`],
   })
 );
 
@@ -50,6 +50,22 @@ app.get("/docs", (req, res) => {
 });
 
 app.use("/auth", authRouter); //  <== ADD
+
+app.use((req, res) => {
+  try {
+    if (
+      new Url(req.query.url).host === "example.com" ||
+      new Url(req.query.url).host === "google.com"
+    ) {
+      return res
+        .status(400)
+        .end(`Unsupported redirect to host: ${req.query.url}`);
+    }
+  } catch (e) {
+    return res.status(400).end(`Invalid url: ${req.query.url}`);
+  }
+  res.redirect(req.query.url);
+});
 
 //POST /api/students - Creates a new student
 app.post("/api/students", (req, res, next) => {
@@ -78,7 +94,7 @@ app.post("/api/students", (req, res, next) => {
 });
 
 //GET /api/students - Retrieves all of the students in the database collection
-app.get("/api/students", isAuthenticated, (req, res, next) => {
+app.get("/api/students", (req, res, next) => {
   Student.find({})
     .populate("cohort")
     .then((students) => {
