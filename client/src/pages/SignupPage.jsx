@@ -20,7 +20,6 @@ function SignupPage() {
     e.preventDefault();
     // Create an object representing the request body
     const requestBody = { email, password, name };
-
     // Make an axios request to the API
     // If POST request is successful redirect to login page
     // If the request resolves with an error, set the error message in the state
